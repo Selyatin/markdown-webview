@@ -126,7 +126,12 @@
         }
 
 
-        const resizeObserver = new ResizeObserver((entries) => {window.webkit.messageHandlers.sizeChangeHandler.postMessage(entries[0].borderBoxSize[0].blockSize)});
+        const resizeObserver = new ResizeObserver((entries) => {
+        window.webkit.messageHandlers.sizeChangeHandler.postMessage({
+            height: entries[0].borderBoxSize[0].blockSize,
+            width: entries[0].borderBoxSize[0].inlineSize
+          });
+        });
         resizeObserver.observe(markdownRenderedElement);
     </script>
 </body>

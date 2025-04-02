@@ -1,9 +1,15 @@
+body {
+  width: fit-content;
+}
+
 #markdown-rendered {
     color: -apple-system-label;
     font-family: system-ui;
-    font-size: 10pt;
+    font-size: 12pt;
     line-height: 1.5;
     word-wrap: break-word;
+    width: max-content;
+    max-width: 600pt;
 }
 
 #markdown-rendered details,
