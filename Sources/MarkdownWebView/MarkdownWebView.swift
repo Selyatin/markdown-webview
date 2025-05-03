@@ -40,6 +40,30 @@ import WebKit
       public func makeUIView(context: Context) -> CustomWebView { context.coordinator.platformView }
     #endif
 
+    #if os(macOS)
+      public static func dismantleNSView(_ nsView: CustomWebView, coordinator: Coordinator) {
+        let platformView = coordinator.platformView
+
+        platformView.configuration.userContentController.removeScriptMessageHandler(
+          forName: "sizeChangeHandler")
+        platformView.configuration.userContentController.removeScriptMessageHandler(
+          forName: "renderedContentHandler")
+        platformView.configuration.userContentController.removeScriptMessageHandler(
+          forName: "copyToPasteboard")
+      }
+    #elseif os(iOS)
+      public static func dismantleUIView(_ uiView: CustomWebView, coordinator: Coordinator) {
+        let platformView = coordinator.platformView
+
+        platformView.configuration.userContentController.removeScriptMessageHandler(
+          forName: "sizeChangeHandler")
+        platformView.configuration.userContentController.removeScriptMessageHandler(
+          forName: "renderedContentHandler")
+        platformView.configuration.userContentController.removeScriptMessageHandler(
+          forName: "copyToPasteboard")
+      }
+    #endif
+
     func updatePlatformView(_ platformView: CustomWebView, context _: Context) {
       guard !platformView.isLoading else { return }
       /// This function might be called when the page is still loading, at which time `window.proxy` is not available yet.
