@@ -11,23 +11,29 @@ import WebKit
   @available(macOS 11.0, iOS 14.0, *)
   public struct MarkdownWebView: PlatformViewRepresentable {
     let markdownContent: String
-    let customStylesheet: String?
+    let overwriteStylesheet: String?
+    let extraStylesheet: String?
     let linkActivationHandler: ((URL) -> Void)?
     let renderedContentHandler: ((String) -> Void)?
 
-    public init(_ markdownContent: String, customStylesheet: String? = nil) {
+    public init(
+      _ markdownContent: String, overwriteStylesheet: String? = nil, extraStylesheet: String? = nil
+    ) {
       self.markdownContent = markdownContent
-      self.customStylesheet = customStylesheet
+      self.overwriteStylesheet = overwriteStylesheet
+      self.extraStylesheet = extraStylesheet
       linkActivationHandler = nil
       renderedContentHandler = nil
     }
 
     init(
-      _ markdownContent: String, customStylesheet: String?, linkActivationHandler: ((URL) -> Void)?,
+      _ markdownContent: String, overwriteStylesheet: String?, extraStylesheet: String?,
+      linkActivationHandler: ((URL) -> Void)?,
       renderedContentHandler: ((String) -> Void)?
     ) {
       self.markdownContent = markdownContent
-      self.customStylesheet = customStylesheet
+      self.overwriteStylesheet = overwriteStylesheet
+      self.extraStylesheet = extraStylesheet
       self.linkActivationHandler = linkActivationHandler
       self.renderedContentHandler = renderedContentHandler
     }
@@ -82,14 +88,16 @@ import WebKit
 
     public func onLinkActivation(_ linkActivationHandler: @escaping (URL) -> Void) -> Self {
       .init(
-        markdownContent, customStylesheet: customStylesheet,
+        markdownContent, overwriteStylesheet: overwriteStylesheet,
+        extraStylesheet: extraStylesheet,
         linkActivationHandler: linkActivationHandler, renderedContentHandler: renderedContentHandler
       )
     }
 
     public func onRendered(_ renderedContentHandler: @escaping (String) -> Void) -> Self {
       .init(
-        markdownContent, customStylesheet: customStylesheet,
+        markdownContent, overwriteStylesheet: overwriteStylesheet,
+        extraStylesheet: extraStylesheet,
         linkActivationHandler: linkActivationHandler, renderedContentHandler: renderedContentHandler
       )
     }
@@ -154,7 +162,9 @@ import WebKit
           templateString
           .replacingOccurrences(of: "PLACEHOLDER_SCRIPT", with: script)
           .replacingOccurrences(
-            of: "PLACEHOLDER_STYLESHEET", with: self.parent.customStylesheet ?? defaultStylesheet)
+            of: "PLACEHOLDER_STYLESHEET",
+            with: self.parent.overwriteStylesheet ?? defaultStylesheet
+              + (self.parent.extraStylesheet ?? ""))
         platformView.loadHTMLString(htmlString, baseURL: nil)
       }
 
